@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: oes_web
+    ports:
+      - "8080:80"
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+      - DB_HOST=db
+      - DB_USER=oes_user
+      - DB_PASS=oes_pass
+      - DB_NAME=optimumsite
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:10.6
+    container_name: oes_db
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=optimumsite
+      - MYSQL_USER=oes_user
+      - MYSQL_PASSWORD=oes_pass
+      - MYSQL_ROOT_PASSWORD=root_pass_change_me
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: oes_phpmyadmin
+    restart: unless-stopped
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=oes_user
+      - PMA_PASSWORD=oes_pass
+    ports:
+      - "8082:80"
+    depends_on:
+      - db
+
+volumes:
+  db_data:

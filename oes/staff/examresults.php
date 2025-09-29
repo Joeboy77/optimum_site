@@ -1,0 +1,170 @@
+<?php
+include('includes/header.php');
+include('includes/navbar.php');
+
+$teacher_name = $_SESSION['firstname'] . ' ' . $_SESSION['lastname'];
+$teacher_id = $_SESSION['schoolID'];
+
+?> 
+
+<main class="mt-5 pt-3">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12 mb-3">
+        <div class="card-header d-sm-flex align-items-center justify-content-between">
+          <span><i class="bi bi-table me-2"></i>Exam & Quiz Results</span> 
+        </div>
+        <?php
+        if (isset($_SESSION["status"]) && $_SESSION["status"] != '') {
+          ?>
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Hey!</strong> <?php echo $_SESSION["status"];?>.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <?php
+          unset($_SESSION["status"]);
+        }
+
+        if (isset($_SESSION["success"]) && $_SESSION["success"] != '') {
+          ?>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Hey!</strong> <?php echo $_SESSION["success"];?>.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <?php
+          unset($_SESSION["success"]);
+        }
+        ?>
+        <div class="card-body">
+          <div class="row align-items-center justify-content-center">
+            <div class="col-md-12">
+              <table id="example" class="table table-striped table-hover text-center">
+                <thead class="table-success">
+                  <tr>
+                    <th hidden>ID.</th>
+                    <th>S. No.</th>
+                    <th>Student</th>
+                    <th>Exam</th>
+                    <th>Course</th>
+                    <th>Score</th>
+                    <th>Total Questions</th>
+                    <th>Percentage</th>
+                    <th>Taken At</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="data">
+                  <?php
+                  $query = "SELECT r.*, e.title as exam_title, e.course, e.total_questions, e.totalmarks, e.category, s.firstname, s.lastname, s.indexnumber 
+                           FROM exam_results r 
+                           LEFT JOIN exams_setting e ON r.exam_id = e.id 
+                           LEFT JOIN student_registration s ON r.student_id = s.indexnumber 
+                           WHERE (e.created_by = '$teacher_name' OR e.created_by = '$teacher_id')
+                           ORDER BY r.taken_at DESC";
+                  $query_run = mysqli_query($con, $query);
+                  if($query_run && mysqli_num_rows($query_run) > 0){
+                    $no = 1;
+                    while ($row = mysqli_fetch_assoc($query_run)){
+                      $denominator = (isset($row['totalmarks']) && (int)$row['totalmarks'] > 0) ? (int)$row['totalmarks'] : ((int)$row['total_questions'] > 0 ? (int)$row['total_questions'] : 0);
+                      $percentage = $denominator > 0 ? round(($row['score'] / $denominator) * 100, 2) : 0;
+                  ?>
+                  <tr>
+                    <td hidden><?php echo $row["id"];?></td>
+                    <td><?php echo $no;?></td>
+                    <td><?php echo $row["firstname"] . ' ' . $row["lastname"];?></td>
+                    <td><?php echo $row["exam_title"] . (isset($row['category']) && $row['category'] ? ' ('.htmlspecialchars($row['category']).')' : ''); ?></td>
+                    <td><?php echo $row["course"];?></td>
+                    <td><?php echo $row["score"];?></td>
+                    <td><?php echo $row["total_questions"];?></td>
+                    <td>
+                      <span class="badge <?php echo $percentage >= 70 ? 'bg-success' : ($percentage >= 50 ? 'bg-warning' : 'bg-danger'); ?>">
+                        <?php echo $percentage; ?>%
+                      </span>
+                    </td>
+                    <td><?php echo date('M d, Y H:i', strtotime($row["taken_at"]));?></td>
+                    <td>
+                      <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewResultModal<?php echo $row['id']; ?>" title="View Details">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </td>
+                  </tr>
+
+                  <!-- View Result Modal -->
+                  <div class="modal fade" id="viewResultModal<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="viewResultModalLabel<?php echo $row['id']; ?>" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="viewResultModalLabel<?php echo $row['id']; ?>">Exam Result Details</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <h6>Student Information</h6>
+                              <p><strong>Name:</strong> <?php echo $row["firstname"] . ' ' . $row["lastname"]; ?></p>
+                              <p><strong>Index Number:</strong> <?php echo $row["indexnumber"]; ?></p>
+                            </div>
+                            <div class="col-md-6">
+                              <h6>Exam Information</h6>
+                              <p><strong>Exam:</strong> <?php echo $row["exam_title"]; ?></p>
+                              <p><strong>Course:</strong> <?php echo $row["course"]; ?></p>
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-md-4">
+                              <div class="text-center">
+                                <h4 class="text-primary"><?php echo $row["score"]; ?></h4>
+                                <p class="text-muted">Score</p>
+                              </div>
+                            </div>
+                            <div class="col-md-4">
+                              <div class="text-center">
+                                <h4 class="text-info"><?php echo $row["total_questions"]; ?></h4>
+                                <p class="text-muted">Total Questions</p>
+                              </div>
+                            </div>
+                            <div class="col-md-4">
+                              <div class="text-center">
+                                <h4 class="<?php echo $percentage >= 70 ? 'text-success' : ($percentage >= 50 ? 'text-warning' : 'text-danger'); ?>">
+                                  <?php echo $percentage; ?>%
+                                </h4>
+                                <p class="text-muted">Percentage</p>
+                              </div>
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="row">
+                            <div class="col-12">
+                              <p><strong>Taken At:</strong> <?php echo date('M d, Y H:i:s', strtotime($row["taken_at"])); ?></p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-primary" onclick="window.print()">Print Result</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <?php
+                  $no++;
+                  }
+                }else{
+                  echo "<tr><td hidden></td><td colspan='9' class='text-center'>No exam results found for your exams</td></tr>";
+                }
+                ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<?php
+include('includes/footer.php');
+?>

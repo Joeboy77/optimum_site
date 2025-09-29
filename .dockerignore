@@ -1,0 +1,11 @@
+.git
+.gitignore
+node_modules
+vendor/composer/installed.json
+vendor/composer/installed.php
+*.sql
+*.log
+*.md
+files/
+images/
+.DS_Store
