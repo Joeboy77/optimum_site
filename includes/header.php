@@ -28,7 +28,7 @@ require 'config.php';
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container">
           <a class="navbar-brand fs-2 fw-bold" href="index.php">
-            <img src="images/Optimum.png" class="img-fluid" style="width: 60px;"/>
+          <img src="/images/Optimum.png" class="img-fluid" style="width: 60px;"/>
             <span class="text-primary">Optimum</span>TI
           </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

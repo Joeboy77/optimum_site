@@ -91,7 +91,7 @@
           <!-- Sidebar - Brand -->
 <!-- <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
   
-  <img src="../images/favicon.png" alt="logo" style="width: 80px; height: 80px; padding: 5px;">
+          <img src="/images/favicon.png" alt="logo" style="width: 80px; height: 80px; padding: 5px;">
 </a> -->
 <div class="card-title d-flex align-items-center justify-content-center mt-2">Tutor:</div>
   <span class="sidebar-brand d-flex align-items-center justify-content-center" style="color: white; font-weight: bold;"><h6><?php echo $_SESSION['firstname'] ." ".$_SESSION['lastname']?></h6></span>

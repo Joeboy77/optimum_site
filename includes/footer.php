@@ -16,7 +16,7 @@
           <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
             <h5 class="text-uppercase mb-4 font-weight-bold text-warning">Optimum Training Inst.</h5>
             <hr>
-            <img src="images/Optimum.png" class="img-fluid w-50" >
+        <img src="/images/Optimum.png" class="img-fluid w-50" >
             <p style="text-align: left;">OPTIMUM is shaping a new generation of leaders and innovators across and by joining us, you gain access to an entire ecosystem of opportunity.</p>
           </div>
           <div class="col-md-2 col-lg-2 col-xl-3 mx-auto mt-3">
