@@ -6,6 +6,4 @@ vendor/composer/installed.php
 *.sql
 *.log
 *.md
-files/
-images/
 .DS_Store
