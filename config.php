@@ -28,6 +28,10 @@ if (!$con) {
 ini_set('display_errors', getenv('DISPLAY_ERRORS') ?: 0);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/error.log');
+// Touch error log to ensure it exists in container
+if (!file_exists(__DIR__ . '/error.log')) {
+    @file_put_contents(__DIR__ . '/error.log', "");
+}
 
 // Set timezone
 date_default_timezone_set('UTC');

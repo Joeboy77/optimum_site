@@ -46,7 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['proceed'])) {
     $_SESSION["contact"] = $contact;
     $_SESSION["email"] = $email;
 
-    header('Location: proceedregistration.php');
+    // Log and use absolute path to avoid relative redirect issues
+    if (function_exists('error_log')) { error_log("[admin/addstudent] proceeding to /oes/admin/proceedregistration.php\n", 3, __DIR__ . '/../../error.log'); }
+    header('Location: /oes/admin/proceedregistration.php');
     exit();
   }
 }

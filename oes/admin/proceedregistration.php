@@ -101,11 +101,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['proceed'])) {
     mysqli_query($con, "INSERT INTO student_registration ($fieldList) VALUES ($valueList)");
 
     $_SESSION['success'] = 'Success!! Student registered successfully';
-    header('Location: student.php');
+    if (function_exists('error_log')) { error_log("[admin/proceedregistration] inserted student: " . $currentIndex . "\n", 3, __DIR__ . '/../../error.log'); }
+    header('Location: /oes/admin/student.php');
     exit();
   } else {
     $_SESSION['status'] = 'Error!! Information not Saved Successfully';
-    header('Location: proceedregistration.php');
+    if (function_exists('error_log')) { error_log("[admin/proceedregistration] insert registration failed: " . mysqli_error($con) . "\n", 3, __DIR__ . '/../../error.log'); }
+    header('Location: /oes/admin/proceedregistration.php');
     exit();
   }
 }
